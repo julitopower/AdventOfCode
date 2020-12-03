@@ -33,3 +33,6 @@
 
 gitconfig
 *~
+
+# CMake build dir
+build/
