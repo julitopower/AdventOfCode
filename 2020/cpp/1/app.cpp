@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
     // N^2 traversal to find matching pair
     int offset = 0;
     for (int v1 : data) {
-      for (auto it = data.begin() + offset ; it != data.end() ; ++it) {
+      for (auto it = data.begin() + offset ; it != (data.end() - 1) ; ++it) {
         if ((v1 + *it) == target_value) {
           std::cout << (v1 * (*it)) << std::endl;
         }
