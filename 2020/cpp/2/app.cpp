@@ -1,24 +1,21 @@
-#include <bits/c++config.h>
-#include <ios>
-#include <iostream>
-#include <fstream>
 #include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 #include <string>
 #include <tuple>
-#include <sstream>
 
-// Prediate for day one. Character letter must appear a number of times [min, max]
+// Prediate for day one - 1. Character letter must appear a number of times [min, max]
 bool predicate_1(const std::string& str, char letter, std::size_t min, std::size_t max) {
   std::size_t times = 0;
   std::for_each(std::begin(str), std::end(str),
                 [&times, letter](char l){
-                  if (l == letter) {
-                    ++times;
-                  }
+                  if (l == letter) { ++times; }
                 });
   return ((times >= min) && (times <= max));
 }
 
+// Predicate for day one - 2. The letter must appear in only one of the positions min, max
 bool predicate_2(const std::string& str, char letter, std::size_t min, std::size_t max) {
   return (str[min] == letter) ^ (str[max] == letter);
 }
@@ -57,15 +54,12 @@ int main(int argc, char** argv) {
   std::size_t count1 = 0;
   std::size_t count2 = 0;
   for(std::string line ; std::getline(fs, line) ; ) {
-    int min, max;
-    char letter;
-    std::string word;
-    std::tie(min, max, letter, word) = process_line(line);
-    
+    const auto& [min, max, letter, word] = process_line(line);
+
     if (predicate_1(word, letter, min, max)) { ++count1; }
     if (predicate_2(word, letter, min, max)) { ++count2; }
   }
 
   std::cout << "Valid passwords for rule 1 found: " << count1 << "\n";
-  std::cout << "Valid passwords for rule 2 found: " << count2 << "\n";  
+  std::cout << "Valid passwords for rule 2 found: " << count2 << "\n";
 }
