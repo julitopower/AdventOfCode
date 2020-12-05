@@ -7,7 +7,8 @@
 #include <tuple>
 #include <sstream>
 
-bool predicate(const std::string& str, char letter, std::size_t min, std::size_t max) {
+// Prediate for day one. Character letter must appear a number of times [min, max]
+bool predicate_1(const std::string& str, char letter, std::size_t min, std::size_t max) {
   std::size_t times = 0;
   std::for_each(std::begin(str), std::end(str),
                 [&times, letter](char l){
@@ -16,6 +17,10 @@ bool predicate(const std::string& str, char letter, std::size_t min, std::size_t
                   }
                 });
   return ((times >= min) && (times <= max));
+}
+
+bool predicate_2(const std::string& str, char letter, std::size_t min, std::size_t max) {
+  return (str[min] == letter) ^ (str[max] == letter);
 }
 
 std::tuple<int, int, char, std::string> process_line(const std::string& line) {
@@ -46,17 +51,21 @@ std::tuple<int, int, char, std::string> process_line(const std::string& line) {
 }
 
 int main(int argc, char** argv) {
-  std::cout << "Advent of code 2020. Day 2" << std::endl;  
+  std::cout << "Advent of code 2020. Day 2\n";
   auto fs = std::fstream{"input2.txt"};
 
-  std::size_t count = 0;
+  std::size_t count1 = 0;
+  std::size_t count2 = 0;
   for(std::string line ; std::getline(fs, line) ; ) {
-    auto record = process_line(line);
-    if (predicate(std::get<3>(record), std::get<2>(record),
-                  std::get<0>(record), std::get<1>(record))) {
-      ++count;
-    }
+    int min, max;
+    char letter;
+    std::string word;
+    std::tie(min, max, letter, word) = process_line(line);
+    
+    if (predicate_1(word, letter, min, max)) { ++count1; }
+    if (predicate_2(word, letter, min, max)) { ++count2; }
   }
 
-  std::cout << "Valid passwords found: " << count << "\n";
+  std::cout << "Valid passwords for rule 1 found: " << count1 << "\n";
+  std::cout << "Valid passwords for rule 2 found: " << count2 << "\n";  
 }

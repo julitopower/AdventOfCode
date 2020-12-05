@@ -10,7 +10,7 @@ Solution-2: 214486272
 https://adventofcode.com/2020/day/2
 
 Solution-1: 398
-Solution-2:
+Solution-2: 562
 
 # Day3
 
