@@ -17,6 +17,7 @@ Solution-2: 562
 https://adventofcode.com/2020/day/3
 
 Solution-1: 173
+Solution-2: 4385176320
 
 # Day4
 
