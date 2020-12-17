@@ -35,4 +35,4 @@ Solution-2: 532
 
 https://adventofcode.com/2020/day/6
 Solution-1: 6763
-Solution-2: 
+Solution-2: 3512
