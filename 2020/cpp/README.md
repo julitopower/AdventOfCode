@@ -29,4 +29,10 @@ Solution-2: 153
 
 https://adventofcode.com/2020/day/5
 Solution-1: 883
+Solution-2: 532
+
+# Day6
+
+https://adventofcode.com/2020/day/6
+Solution-1: 
 Solution-2: 
