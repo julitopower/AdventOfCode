@@ -34,5 +34,5 @@ Solution-2: 532
 # Day6
 
 https://adventofcode.com/2020/day/6
-Solution-1: 
+Solution-1: 6763
 Solution-2: 
