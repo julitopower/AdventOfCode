@@ -36,3 +36,9 @@ Solution-2: 532
 https://adventofcode.com/2020/day/6
 Solution-1: 6763
 Solution-2: 3512
+
+# Day7
+
+https://adventofcode.com/2020/day/7
+Solution-1: 121
+Solution-2:
