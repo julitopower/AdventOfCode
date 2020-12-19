@@ -34,19 +34,21 @@ std::string remove_first_word(const std::string &str) {
   return str.substr(pos + 1);
 }
 
-/* Builds a map from bag color, to a list of bag colors that
-   can contain it. This esentially represents a graph in which
-   each node has edges pointing to the bag colors that can
-   contain it.
-*/
-std::map<std::string, std::vector<std::string>>
-build_color_map(const std::string &filename) {
+std::string get_first_word(const std::string &str) {
+  auto pos = str.find(" ");
+  return str.substr(0, pos);
+}
+
+/* Build the map from bag to the bags it can contain
+ */
+std::map<std::string, std::vector<std::pair<std::size_t, std::string>>>
+build_bag_map(const std::string &filename) {
   // This is the word that separates a bag type from its possible
   // containers.
   const std::string CONTAIN = "contain";
 
   std::ifstream fs{filename};
-  std::map<std::string, std::vector<std::string>> containers_of;
+  std::map<std::string, std::vector<std::pair<std::size_t, std::string>>> contains;
   for (std::string line; std::getline(fs, line);) {
     // Split the color bag from its list of containers
     auto pos = line.find(CONTAIN);
@@ -60,11 +62,32 @@ build_color_map(const std::string &filename) {
       if (value == "no other") {
         continue;
       }
+      
+      const auto quantity = std::stoi(get_first_word(value));
       value = remove_first_word(value);
-      containers_of[value].push_back(keystr);
+      contains[keystr].push_back(std::make_pair(quantity, value));
     }
   }
 
+  return contains;
+}
+
+/* Builds a map from bag color, to a list of bag colors that
+   can contain it. This esentially represents a graph in which
+   each node has edges pointing to the bag colors that can
+   contain it.
+*/
+std::map<std::string, std::vector<std::string>>
+build_color_map(const std::string &filename) {
+  const auto contains = build_bag_map(filename);
+  std::map<std::string, std::vector<std::string>> containers_of;
+  for (auto pair : contains) {
+    const auto key = pair.first;
+    const auto values = pair.second;
+    for (auto p : values) {
+      containers_of[p.second].push_back(key);
+    }
+  }
   return containers_of;
 }
 
@@ -72,6 +95,7 @@ int main(int argc, char *argv[]) {
   const auto target = "shiny gold";
   auto containers_of = build_color_map("input7.txt");
 
+  // Traversal to solve Day7-1
   std::set<std::string> visited{};
   std::vector<std::string> pending{target};
   while (!pending.empty()) {
@@ -94,5 +118,9 @@ int main(int argc, char *argv[]) {
   // A bag cannot contain itself, so the right values is visited - 1
   std::cout << "Colors that can contain shinny gold " << (visited.size() - 1)
             << std::endl;
+
+  // Day7-2
+  auto contains = build_bag_map("input7.txt");
+  
   return 0;
 }
