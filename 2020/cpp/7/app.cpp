@@ -34,12 +34,15 @@ std::string remove_first_word(const std::string &str) {
   return str.substr(pos + 1);
 }
 
+/* In a string containing serveral wrods separated by ' ', return the
+   left-most one.
+*/
 std::string get_first_word(const std::string &str) {
   auto pos = str.find(" ");
   return str.substr(0, pos);
 }
 
-/* Build the map from bag to the bags it can contain
+/* Build the map from bag to the bags it can contain, i.e. <color, {count, color}>
  */
 std::map<std::string, std::vector<std::pair<std::size_t, std::string>>>
 build_bag_map(const std::string &filename) {
@@ -48,7 +51,8 @@ build_bag_map(const std::string &filename) {
   const std::string CONTAIN = "contain";
 
   std::ifstream fs{filename};
-  std::map<std::string, std::vector<std::pair<std::size_t, std::string>>> contains;
+  std::map<std::string, std::vector<std::pair<std::size_t, std::string>>>
+      contains;
   for (std::string line; std::getline(fs, line);) {
     // Split the color bag from its list of containers
     auto pos = line.find(CONTAIN);
@@ -62,7 +66,7 @@ build_bag_map(const std::string &filename) {
       if (value == "no other") {
         continue;
       }
-      
+
       const auto quantity = std::stoi(get_first_word(value));
       value = remove_first_word(value);
       contains[keystr].push_back(std::make_pair(quantity, value));
@@ -70,6 +74,22 @@ build_bag_map(const std::string &filename) {
   }
 
   return contains;
+}
+
+/* Calculate the total number of bags a particular bag color can contain
+   Implemented as a recursive breadth first traversal
+*/
+std::size_t can_contain(
+    std::map<std::string, std::vector<std::pair<std::size_t, std::string>>>
+        contains,
+    const std::string color) {
+  auto children = contains[color];
+  auto n_children = 0;
+  for (const auto &child : children) {
+    n_children += child.first;
+    n_children += (child.first * can_contain(contains, child.second));
+  }
+  return n_children;
 }
 
 /* Builds a map from bag color, to a list of bag colors that
@@ -121,6 +141,9 @@ int main(int argc, char *argv[]) {
 
   // Day7-2
   auto contains = build_bag_map("input7.txt");
-  
+  auto can_contain_total_bags = can_contain(contains, target);
+  std::cout << target << " bag can contain " << can_contain_total_bags
+            << " bags "
+            << "\n";
   return 0;
 }
