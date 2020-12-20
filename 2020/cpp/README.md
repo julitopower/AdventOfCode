@@ -42,3 +42,9 @@ Solution-2: 3512
 https://adventofcode.com/2020/day/7
 Solution-1: 121
 Solution-2: 3805
+
+# Day8
+
+https://adventofcode.com/2020/day/8
+Solution-1: 1137
+Solution-2: 
