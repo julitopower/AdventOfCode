@@ -47,4 +47,4 @@ Solution-2: 3805
 
 https://adventofcode.com/2020/day/8
 Solution-1: 1137
-Solution-2: 
+Solution-2: 1125
