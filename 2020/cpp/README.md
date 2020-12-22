@@ -53,4 +53,4 @@ Solution-2: 1125
 
 https://adventofcode.com/2020/day/9
 Solution-1: 248131121
-Solution-2:
+Solution-2: 31580383
