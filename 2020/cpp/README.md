@@ -64,7 +64,7 @@ Solution-2: 1322306994176
 # Day11
 
 https://adventofcode.com/2020/day/11
-Solution-1: 
+Solution-1: 2412
 Solution-2:
 
 
