@@ -36,3 +36,4 @@ gitconfig
 
 # CMake build dir
 build/
+compile_commands.json
