@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <bits/c++config.h>
 #include <cassert>
 #include <fstream>
 #include <iostream>
@@ -12,11 +11,25 @@ namespace {
 /*! \brief The possible states of a cell
  */
 enum class Cell { FLOOR, FREE, TAKEN };
+std::ostream& operator<<(std::ostream& os, const Cell c) {
+  switch (c) {
+    case Cell::FLOOR:
+      os << "Floor";
+      break;
+    case Cell::FREE:
+      os << "Free";
+      break;
+    case Cell::TAKEN:
+      os << "Taken";
+      break;
+  }
+  return os;
+}
 
 /*! \brief A Map is a grid of Cell states stored as a vector in row major order
  */
 class Map {
-public:
+ public:
   Map() = default;
   Map(Map &&map) = default;
 
@@ -78,6 +91,41 @@ public:
     return neighbors;
   }
 
+  /*! \brief Neighbors in line of sight.
+   *
+   * Keep looking in each direction until a Cell that is not floor is seen.
+   */
+  std::vector<Cell> neighbors_los(std::size_t row, std::size_t col) const {
+    std::vector<Cell> neighbors{};
+    std::vector<std::pair<int, int>> dirs = {
+      {-1, -1}, {0, -1}, {1, -1},
+      {-1, 0}, {1, 0},
+      {-1, 1}, {0, 1}, {1, 1}
+    };
+    
+    for (const auto& dir : dirs) {
+      auto target_row = row;
+      auto target_col = col;
+      
+      while(true) {
+        target_row += dir.second;
+        target_col += dir.first;
+        if (target_row < 0 || target_row >= rows_) {
+          break;
+        }
+        if (target_col < 0 || target_col >= cols_) {
+          break;
+        }
+        const auto cell = map_[target_row * cols_ + target_col];
+        if (cell != Cell::FLOOR) {
+          neighbors.push_back(cell);
+          break;
+        }
+      }
+    }
+    return neighbors;
+  }  
+
   /*! \brief Count the number of cells in the mat with a particular state */
   std::size_t count(Cell state) {
     return std::count_if(map_.begin(), map_.end(),
@@ -88,7 +136,7 @@ public:
   /*! \brief The number of cols */
   std::size_t cols() const { return cols_; }
 
-private:
+ private:
   std::vector<Cell> map_;
   std::size_t rows_;
   std::size_t cols_;
@@ -101,15 +149,15 @@ Map load_map(std::string filename) {
     std::vector<Cell> row{};
     for (const char c : line) {
       switch (c) {
-      case 'L':
-        row.push_back(Cell::FREE);
-        break;
-      case '.':
-        row.push_back(Cell::FLOOR);
-        break;
-      case '#':
-        row.push_back(Cell::TAKEN);
-        break;
+        case 'L':
+          row.push_back(Cell::FREE);
+          break;
+        case '.':
+          row.push_back(Cell::FLOOR);
+          break;
+        case '#':
+          row.push_back(Cell::TAKEN);
+          break;
       }
     }
     m.add_row(row);
@@ -117,11 +165,11 @@ Map load_map(std::string filename) {
   return m;
 }
 
-std::size_t update(Map &m) {
+std::size_t update(Map &m, int max_occupied = 4, bool los = false) {
   std::vector<std::tuple<std::size_t, std::size_t, Cell>> changelist;
   for (auto row = 0; row < m.rows(); ++row) {
     for (auto col = 0; col < m.cols(); ++col) {
-      const auto neighbors = m.neighbors(row, col);
+      const auto neighbors = (los) ? m.neighbors_los(row, col) : m.neighbors(row, col);
       if (m.get(row, col) == Cell::FREE) {
         if (std::all_of(neighbors.begin(), neighbors.end(),
                         [](auto n) { return n != Cell::TAKEN; })) {
@@ -129,7 +177,7 @@ std::size_t update(Map &m) {
         }
       } else if (m.get(row, col) == Cell::TAKEN) {
         if (std::count_if(neighbors.begin(), neighbors.end(),
-                          [](auto n) { return n == Cell::TAKEN; }) > 3) {
+                          [](auto n) { return n == Cell::TAKEN; }) >= max_occupied) {
           changelist.push_back({row, col, Cell::FREE});
         }
       }
@@ -144,17 +192,34 @@ std::size_t update(Map &m) {
 } // namespace
 int main(int argc, char *argv[]) {
   std::cout << "AdventOfCode2020 Day11" << std::endl;
-  Map m{load_map("input11.txt")};
-  std::cout << "Map loaded, rows: " << m.rows() << ", cols: " << m.cols()
-            << std::endl;
-  std::size_t updates = 0;
-  while (update(m) > 0) {
-    ++updates;
-    // std::cout << "Updating more" << std::endl;
+  // Part-1
+  {
+    Map m{load_map("input11.txt")};
+    std::cout << "Map loaded, rows: " << m.rows() << ", cols: " << m.cols()
+              << std::endl;
+    std::size_t updates = 0;
+    while (update(m) > 0) {
+      ++updates;
+    }
+
+    std::cout << "Part-1: " << updates << " updates" << std::endl;
+    std::cout << "Part-1: " << m.count(Cell::TAKEN) << " occuppied cells"
+              << std::endl;
   }
 
-  std::cout << "Part-1: " << updates << " updates" << std::endl;
-  std::cout << "Part-1: " << m.count(Cell::TAKEN) << " occuppied cells"
-            << std::endl;
+  // Part-2
+  {
+    Map m{load_map("input11.txt")};
+    std::cout << "Map loaded, rows: " << m.rows() << ", cols: " << m.cols()
+              << std::endl;
+    std::size_t updates = 0;
+    while (update(m, 5, true) > 0) {
+      ++updates;
+    }
+
+    std::cout << "Part-2: " << updates << " updates" << std::endl;
+    std::cout << "Part-2: " << m.count(Cell::TAKEN) << " occuppied cells"
+              << std::endl;
+  }  
   return 0;
 }
