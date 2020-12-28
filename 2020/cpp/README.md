@@ -70,7 +70,7 @@ Solution-2: 2176
 # Day12
 
 https://adventofcode.com/2020/day/12
-Solution-1: 
+Solution-1: 562
 Solution-2: 
 
 
