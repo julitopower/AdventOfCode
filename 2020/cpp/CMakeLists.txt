@@ -16,6 +16,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/1/input1.txt
   ${CMAKE_CURRENT_SOURCE_DIR}/9/input9.txt
   ${CMAKE_CURRENT_SOURCE_DIR}/10/input10.txt
   ${CMAKE_CURRENT_SOURCE_DIR}/11/input11.txt
+  ${CMAKE_CURRENT_SOURCE_DIR}/12/input12.txt
   DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(day2 ./2/app.cpp)
@@ -28,3 +29,4 @@ add_executable(day8 ./8/app.cpp)
 add_executable(day9 ./9/app.cpp)
 add_executable(day10 ./10/app.cpp)
 add_executable(day11 ./11/app.cpp)
+add_executable(day12 ./12/app.cpp)

@@ -67,6 +67,12 @@ https://adventofcode.com/2020/day/11
 Solution-1: 2412
 Solution-2: 2176
 
+# Day12
+
+https://adventofcode.com/2020/day/12
+Solution-1: 
+Solution-2: 
+
 
 
 
