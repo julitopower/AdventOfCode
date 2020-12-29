@@ -75,8 +75,8 @@ Solution-2: 101860
 
 # Day13
 
-https://adventofcode.com/2020/day/12
-Solution-1: 
+https://adventofcode.com/2020/day/13
+Solution-1: 2406
 Solution-2: 
 
 
