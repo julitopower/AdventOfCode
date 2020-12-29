@@ -29,7 +29,8 @@ private:
   // The pose of the car includes the direction it is pointing
   // and the x,y coordinates
   DIR dir_ = DIR::EAST;
-  std::size_t posx_ = 0, posy_ = 0;
+  int posx_ = 0, posy_ = 0;
+  int wposx_ = 10, wposy_ = 1;
 
 public:
   // Apply action unit times. Notice that for Left and Right rotations
@@ -40,10 +41,10 @@ public:
     int dy = 0;
     switch (action) {
     case ACTION::NORTH:
-      dy = -units;
+      dy = units;
       break;
     case ACTION::SOUTH:
-      dy = units;
+      dy = -units;
       break;
     case ACTION::EAST:
       dx = units;
@@ -86,6 +87,50 @@ public:
     posy_ += dy;
   }
 
+  // Apply action unit times. Notice that for Left and Right rotations
+  // the units is expected to be a multiple of 90
+  void update2(ACTION action, std::size_t units) {
+    // Delta x,y that will be applied to the position
+    int dx = 0;
+    int dy = 0;
+    switch (action) {
+    case ACTION::NORTH:
+      dy = units;
+      break;
+    case ACTION::SOUTH:
+      dy = -units;
+      break;
+    case ACTION::EAST:
+      dx = units;
+      break;
+    case ACTION::WEST:
+      dx = -units;
+      break;
+    case ACTION::RLEFT: // Apply rotation matrix -90' N times
+      for (auto i = 0U; i < units / 90; ++i) {
+        const auto wposx_aux = wposx_;
+        wposx_ = -wposy_;
+        wposy_ = wposx_aux;
+      }
+      break;
+    case ACTION::RRIGHT: // Apply rotation matrix 90' N times
+      for (auto i = 0U; i < units / 90; ++i) {
+        const auto wposx_aux = wposx_;
+        wposx_ = wposy_;
+        wposy_ = -wposx_aux;
+      }
+      break;
+    case ACTION::FWD:
+      posx_ += units * wposx_;
+      posy_ += units * wposy_;
+      break;
+    default:
+      break;
+    }
+    wposx_ += dx;
+    wposy_ += dy;
+  }
+
   int getx() const { return posx_; }
   int gety() const { return posy_; }
 };
@@ -118,10 +163,13 @@ std::pair<ACTION, int> get_action_units(const std::string &str) {
 int main(int argc, char *argv[]) {
   std::ifstream fs{"input12.txt"};
   Vehicle boat;
+  Vehicle boat2;
   for (std::string line; std::getline(fs, line);) {
     auto p = get_action_units(line);
     boat.update(p.first, p.second);
+    boat2.update2(p.first, p.second);
   }
   std::cout << (std::abs(boat.getx()) + std::abs(boat.gety())) << std::endl;
+  std::cout << (std::abs(boat2.getx()) + std::abs(boat2.gety())) << std::endl;
   return 0;
 }
